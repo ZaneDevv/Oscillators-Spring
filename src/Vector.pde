@@ -28,11 +28,7 @@ public class Vector
         this.x = 0;
         this.y = 0;
     }
-    
-    //----------------------------------------
-    // Constructors
-    //----------------------------------------
-    
+
     /**
      * Creates a new vector with the given coordinates
      * @param x X-coordinate for the vector

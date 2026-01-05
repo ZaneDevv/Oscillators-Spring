@@ -4,19 +4,12 @@
  * @author Álvaro Fernández Barrero
 */
 
-public class SpringOverTime extends ISpring
+public class SpringOverTime extends SpringObject
 {
     //----------------------------------------
     // Attributes
     //----------------------------------------
     
-    private Vector targetPosition = new Vector();
-    private Vector position = new Vector();
-    private Vector velocity = new Vector();
-    
-    private float k = 0;
-    private float mass = 0;
-    private float beta = 0;
     private float omega = 0;
     private float zeta = 0;
     private float omegaZeta = 0;
@@ -87,29 +80,5 @@ public class SpringOverTime extends ISpring
             this.position = c1.multiply(exponential1).add(c2.multiply(exponential2)).add(targetPosition);
             this.velocity = c1.multiply(r1 * exponential1).add(c2.multiply(exponential2 * exponential2));
         }
-    }
-    
-    /**
-     * Sets a new target position
-     * @param targetPosition Current spring's target position
-     * @version 1.0
-     * @date 2026/01/04
-     * @author Álvaro Fernández Barrero
-    */
-    public void setTargetPosition(Vector targetPosition)
-    {
-        this.targetPosition = targetPosition;
-    }
-    
-    /**
-     * Obtains the current spring's position
-     * @return The current spring's position
-     * @version 1.0
-     * @date 2026/01/04
-     * @author Álvaro Fernández Barrero
-    */
-    public Vector getPosition()
-    {
-        return this.position;
     }
 }
