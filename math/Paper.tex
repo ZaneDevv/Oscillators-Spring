@@ -1,0 +1,430 @@
+\documentclass[12pt]{article}
+
+\usepackage[utf8]{inputenc}
+\usepackage{amsmath, amssymb}
+\usepackage{mathtools}
+\usepackage{geometry}
+\usepackage{physics}
+\usepackage{color}
+
+\geometry{margin=1in}
+
+\title{Oscillators - Springs}
+\author{Álvaro Fernández Barrero}
+\date{January 2026}
+
+\begin{document}
+\maketitle
+
+\section{Introduction}
+
+Oscillators are essential when it comes to simulations, animations and game development. Nonetheless, the most realistic way to make it is hard to understand and has quite long formulas. Here, we will go through it little by little.
+
+Before starting, the name \emph{oscillator} may sound a bit incomprehensible, but this is just a fancy way to call the movement of a body which moves back and forth like a spring.
+
+
+
+\section{Hooke's law and its first interpretation}
+
+The first approach to oscillators is always the same: getting to know the Hooke's law. This law is about oscillators and has the following form:
+
+\[
+    F = -kx
+\]
+
+In this formula, $k$ is a constant and $x$ is the difference of the current body's position $p$ and the rest position $r$ (goal):
+
+\[
+    F = -kx = -k(p - r)
+\]
+
+In physics, this formula works just nice, but in simulations it will never stop. Thus, we need to add damping parameter to reduce the velocity of the object in order to help it from moving without stop.
+
+\[
+    F = -\beta v - k(p - r)
+\]
+
+This is the damped Hooke's law, and here $\beta$ is just a constant and $v$ is the body's velocity.
+
+Knowing this, we are already able to use in our codes to make that oscillator motion by using the Euler method which states that:
+
+\[
+    v_{n+1} = v_n + a \Delta t
+\]
+\[
+    x_{n+1} = x_n + v \Delta t
+\]
+
+The remaining formula would look like:
+
+\[
+    v_{n+1} = v_n - \beta v_n - k(p - r)
+\]
+\[
+    x_{n+1} = x_n + v_n \Delta t
+\]
+
+We start our simulation and we will see such a great motion in out body, but it could be even better. 
+
+For the moment, these formulas rely on the frame rate even though we added $\Delta t$, Euler method is not the best solution solution, it just helps, without needing great resources. We want something which relies only on time.
+
+
+
+\section{Diving into the physics}
+
+\subsection{Obtaining an ODE}
+
+Let us start with two fundamental laws in physic: damped Hooke's law and 2nd Newton's law:
+
+\[
+    F = -\beta v - kx
+\]
+\[
+    F = ma
+\]
+
+As you may tell, both equations tell us how the forces that are upon the body we are working with are, which means that both equations must be the same. Thus:
+
+\[
+    -\beta v - kx = ma
+\]
+
+
+Working with it might be hard in the future, so let us try to rewrite it in a way that this become easier:
+
+\[
+    ma + \beta v + k(p - r) = 0
+\]
+\[
+    a + \frac{\beta}{m}v + \frac{k}{m}x = 0
+\]
+
+For now, it does not look easier, but bear with me. To continue, we must understand that $m = (m^\frac{1}{2})^2 = (\sqrt{m})^2 = \sqrt{m}\sqrt{m}$. Might sound a bit arbitrary, but let us plug it on the formula:
+
+\[
+    a + \frac{\beta}{\sqrt{m}\sqrt{m}}v + \frac{k}{m}x = 0
+\]
+\[
+    a + \frac{2 \beta \sqrt{k}}{2\sqrt{m}\sqrt{m}\sqrt{k}}v + \frac{k}{m}x = 0
+\]
+\[
+    a + 2\frac{\sqrt{k}}{\sqrt{m}}\frac{\beta}{2\sqrt{m}\sqrt{k}}v + \frac{k}{m}x = 0
+\]
+\[
+    a + 2 \sqrt{\frac{k}{m}} \frac{\beta}{2 \sqrt{mk}} v + \frac{k}{m}x = 0
+\]
+
+I must say it is not simpler, nonetheless this will allow us to rename some of these constant terms. Commonly, we call them as:
+
+\[
+    \omega = \sqrt{\frac{k}{m}} \quad\quad \zeta = \frac{\beta}{2 \sqrt{mk}}
+\]
+
+Using these name, the formula we had so far turns into:
+
+\[
+    a + 2 \omega \zeta v + \omega^2 x = 0
+\]
+
+From basic physics, we know that the velocity is nothing but the derivative of the position which respect of time and, acceleration, is the second derivative of the position which respect of time:
+
+\[
+    x = x(t)
+\]
+\[
+    v = v(t) = \dot{x}(t) = \frac{dx}{dt}
+\]
+\[
+    a = a(t) = \dot{v}(t) = \frac{dv}{dt} = \ddot{x}(t) = \frac{d^2 x}{dt^2}
+\]
+
+Thus, we apply this knowledge to our formula:
+
+\[
+    \ddot{x}(t) + 2 \omega \zeta \dot{x}(t) + \omega^2 x(t) = 0
+\]
+
+
+\subsection{Linear combination as a solution for the ODE}
+
+We have here now a fantastic ordinary differential equation to solve, but before, let us say that the functions $g$ and $h$ are solutions for this equation. Our mission with this is to check if a linear combination $\gamma g(t) + \lambda h(t)$ is also a solution.
+
+In order to check that, we just plug it in out formula as:
+
+\[
+    \gamma \ddot{g}(t) + \lambda \ddot{h}(t) + 2 \omega \zeta \gamma \dot{g}(t) + 2 \omega \zeta \lambda \dot{h}(t) + \omega^2 \gamma g(t) + \omega^2 \lambda h(t) = 0
+\]
+
+\[
+    \gamma [\ddot{g}(t) + 2 \omega \zeta \dot{g}(t) + \omega^2 g(t)] + \lambda [\ddot{h}(t) + 2 \omega \zeta \dot{h}(t) + \omega^2 h(t)] = 0
+\]
+
+If $g$ and $h$ are solutions for the ODE as we stated before, this means that $\ddot{g}(t) + 2 \omega \zeta \dot{g}(t) + \omega^2 g(t)$ and $\ddot{h}(t) + 2 \omega \zeta \dot{h}(t) + \omega^2 h(t)$ is also 0. Therefore:
+
+\[
+    \gamma \cdot 0 + \lambda \cdot 0 = 0 \quad \quad \forall \gamma, \lambda
+\]
+
+Hence, a linear combination of two solutions for the ODE is also a solution for the same ODE. This result will be powerful later.
+
+
+\subsection{Euler's power}
+
+Just like how Euler would have solved this problem, as we need to derive an unknown function, let us just plug a easy function to derive. The easiest derivative is $e^x$ since its derivative is itself. Thus, we will say that:
+
+\[
+    x(t) = e^{zt}
+\]
+
+We do not know what is $z$, but this is a great approach to solve this problem. Howbeit, what is actually important now, is that we know the form of our function $x(t)$, which means we can compute the velocity and acceleration as:
+
+\[
+    v(t) = \dot{x}(t) = ze^{zt}
+\]
+\[
+    a(t) = \ddot{x}(t) = \dot{v}(t) = z^2 e^{zt}
+\]
+
+And next, we plug it in our equation:
+
+\[
+    z^2 e^{zt} + 2 \omega \zeta ze^{zt} + \omega^2 e^{zt} = 0
+\]
+
+There is a hidden trick here: all the terms has $e^{zt}$, which means we can divide by this term to cancel it out and obtain a nice-looking formula we can solve quite easily.
+
+\[
+    \frac{z^2 e^{zt} + 2 \omega \zeta ze^{zt} + \omega^2 e^{zt}}{e^{zt}} = \frac{0}{e^{zt}}
+\]
+\[
+    \implies z^2 + 2 \omega \zeta z + \omega^2 = 0
+\]
+
+We need to obtain the value of $z$ and here is super simple to obtain, we only need to use Bhaskara's formula to solve this 2nd-degree equation.
+
+\[
+    z = 
+    \frac{-2 \omega \zeta \pm \sqrt{(2 \omega \zeta)^2 - 4 \omega^2}}{2} = 
+    \frac{-2 \omega \zeta \pm \sqrt{4 \omega^2 \zeta^2 - 4 \omega^2}}{2} = 
+    \frac{-2 \omega \zeta \pm 2 \omega \sqrt{\zeta^2 - 1}}{2}
+\]
+\[
+    = \omega \left( -\zeta \pm \sqrt{\zeta^2 - 1} \right)
+\]
+\[
+    \therefore z_1 = \omega \left( -\zeta + \sqrt{\zeta^2 - 1} \right) \quad \quad z_2 = \omega \left( -\zeta - \sqrt{\zeta^2 - 1} \right)
+\]
+
+Here, we come across three possibilities:
+
+\begin{enumerate}
+    \item $\zeta = 1 \implies \zeta^2 - 1 = 0$
+    \item $\zeta < 1 \implies \zeta^2 - 1 < 0$
+    \item $\zeta > 1 \implies \zeta^2 - 1 > 0$
+\end{enumerate}
+
+
+\subsubsection{Case 1.  $\zeta = 1$}
+
+The first possibility is the simplest one because since $\zeta^2 - 1 = 0$, $\sqrt{\zeta^2 - 1} = 0$ and the equation has only one result:
+
+\[
+    z = \omega \left( -\zeta \pm 0 \right) = -\omega\zeta
+\]
+
+If it is the case, we are done, we have a great way to go on. However, we are not interested in this case for our simulation
+
+
+\subsubsection{Case 3. $\zeta > 1$}
+
+Let us skip the second case for the moment and look at the 3rd one.
+
+If $\zeta > 1 \implies \sqrt{\zeta^2 - 1} \in \mathbb{R}$, which makes it much easier to compute. Nevertheless, we are not really interested in this case either.
+
+
+\subsubsection{Case 2. $\zeta < 1$}
+
+This case is a bit rough, but it is the one we are interested in the most. If $\zeta < 1$, it would mean that $\zeta^2 - 1 < 0$ and, therefore, $\sqrt{\zeta^2 - 1} \notin \mathbb{R}$.
+
+We will make a trick for it: we will multiply $\zeta - 1$ times -1 twice:
+
+\[
+    (-1)(-1)(\zeta - 1) = (-1)(1-\zeta^2)
+\]
+
+In the square root is where all the magic happens:
+
+\[
+    \sqrt{(-1)(1-\zeta^2)} = \sqrt{-1}\sqrt{1-\zeta^2} = i\sqrt{1-\zeta^2}
+\]
+
+We finally found our concealed enemy: the imaginary unit $i$, the number that makes this case a much harder.
+
+Now, we can place this in the value of $z$ to obtain:
+
+\[
+    z_1 = \omega \left( -\zeta + i\sqrt{1 - \zeta^2} \right) \quad\quad z_2 = \omega \left( -\zeta - i\sqrt{1 - \zeta^2} \right)
+\]
+
+At this point, we found two possible values for $z$, we only need to check what happens when we plug it in the position formula:
+
+\[
+    x_1 = e^{-t \omega \zeta + i \omega \sqrt{1 - \zeta^2}} = e^{-t \omega \zeta} e^{i \omega \sqrt{1 - \zeta^2}}
+\]
+\[
+    x_2 = e^{-t \omega \zeta + it \omega \sqrt{1 - \zeta^2}} = e^{-t \omega \zeta} e^{-it \omega \sqrt{1 - \zeta^2}}
+\]
+
+Thanks to Euler, we know that:
+
+\[
+    e^{i\theta} = cos(\theta) + i sin(\theta)
+\]
+
+This is called \emph{Euler's identity} and it is super useful and riveting. I mention it briefly now because we can use it in our result as we have got this same form.
+
+\[
+    x_1 = e^{-t \omega \zeta} e^{it \omega \sqrt{1 - \zeta^2}}
+    = e^{-\omega \zeta} \left( cos\left( t\omega \sqrt{1 - \zeta^2} \right) + i sin\left( t\omega \sqrt{1 - \zeta^2} \right) \right)
+\]
+\[
+    x_2 = e^{-t \omega \zeta} e^{-it \omega \sqrt{1 - \zeta^2}}
+    = e^{-\omega \zeta} \left( cos\left( t\omega \sqrt{1 - \zeta^2} \right) - i sin\left( t\omega \sqrt{1 - \zeta^2} \right) \right)
+\]
+
+It is now when we can use the knowledge we obtained by checking if a linear combination of two solution for the ODE is also a solution for the equation by obtaining another function $x_3$:
+
+\[
+    x_3 = \gamma x_1 + \lambda x_2
+\]
+\[
+    = \gamma \left( e^{-t \omega \zeta} \left[ \cos\left( t\omega \sqrt{1 - \zeta^2} \right) + i \sin\left( t\omega \sqrt{1 - \zeta^2} \right) \right] \right)
+\]
+\[
+    + \lambda \left( e^{-t \omega \zeta} \left[ \cos\left( t\omega \sqrt{1 - \zeta^2} \right) - i \sin\left( t\omega \sqrt{1 - \zeta^2} \right) \right] \right)
+\]
+\[
+    = e^{-t \omega \zeta} \left( \gamma \left[ \cos\left( t\omega \sqrt{1 - \zeta^2} \right) + i \sin\left( t\omega \sqrt{1 - \zeta^2} \right) \right] + \lambda \left[ \cos\left( t\omega \sqrt{1 - \zeta^2} \right) - i  \sin\left( t\omega \sqrt{1 - \zeta^2} \right) \right] \right)
+\]
+
+We know at this point all the elements in the formula but $\gamma$ and $\lambda$. However, we know that this work for any couple of numbers we want, so we will choose them strategically.
+
+Let $\gamma = \lambda = \frac{1}{2}$:
+\[
+    = \frac{1}{2}e^{-t \omega \zeta} \left( \cos\left( t\omega \sqrt{1 - \zeta^2} \right) + i \sin\left( t\omega \sqrt{1 - \zeta^2} \right) + \cos\left( t\omega \sqrt{1 - \zeta^2} \right) - i  \sin\left( t\omega \sqrt{1 - \zeta^2} \right) \right)
+\]
+\[
+    = \frac{1}{2}e^{-t \omega \zeta} \left( 2 \cos\left( t\omega \sqrt{1 - \zeta^2} \right) \right)
+    = e^{-t \omega\zeta} \cos\left( t\omega \sqrt{1 - \zeta^2} \right)
+\]
+\[
+    \therefore x_3 = e^{-t \omega\zeta} \cos\left( t\omega \sqrt{1 - \zeta^2} \right)
+\]
+
+This is great, we found a compact formula for our new solution. Next, we will try to follow the same steps for a different value for $\gamma$ and $\lambda$.
+
+Let $\gamma = \frac{1}{2i}$ and $\lambda = -\frac{1}{2i}$:
+\[
+    \frac{1}{2i}e^{-t \omega \zeta} \left( \left[ \cos\left( t\omega \sqrt{1 - \zeta^2} \right) + i \sin\left( t\omega \sqrt{1 - \zeta^2} \right) \right] - \left[ \cos\left( t\omega \sqrt{1 - \zeta^2} \right) - i  \sin\left( t\omega \sqrt{1 - \zeta^2} \right) \right] \right)
+\]
+\[
+    = \frac{1}{2i}e^{-t \omega \zeta} \left( \cos\left( t\omega \sqrt{1 - \zeta^2} \right) + i \sin\left( t\omega \sqrt{1 - \zeta^2} \right)  - \cos\left( t\omega \sqrt{1 - \zeta^2} \right) + i  \sin\left( t\omega \sqrt{1 - \zeta^2} \right) \right)
+\]
+\[
+    = \frac{1}{2i}e^{-t \omega \zeta} \left(2 i \sin\left( t\omega \sqrt{1 - \zeta^2} \right) \right)
+    = e^{-t \omega \zeta} \\sin\left( t\omega \sqrt{1 - \zeta^2} \right)
+\]
+\[
+    \therefore x_4 = e^{-t \omega \zeta} \sin\left( t\omega \sqrt{1 - \zeta^2} \right)
+\]
+
+This is phenomenal, we achieved two different solutions which are super similar to each other. However, we do not want two different solutions, we need a single one that works for most cases.
+
+We will repeat this whole process with these two new solutions $x_3$ and $x_4$ as:
+
+\[
+    x_5 = a x_3 + b x_4
+    = ae^{-t \omega\zeta} \cos\left( t\omega \sqrt{1 - \zeta^2} \right) + be^{-t \omega \zeta} \sin\left( t\omega \sqrt{1 - \zeta^2} \right)
+\]
+\[
+    = e^{-t \omega\zeta} \left( a  \cos\left( t\omega \sqrt{1 - \zeta^2} \right) + b  \sin\left( t\omega \sqrt{1 - \zeta^2} \right) \right)
+\]
+
+Finally! We obtained a brand new formula which is a solution for our original differential equation, which means that we obtained the form of our function $x(t)$. Now are able to obtain also the formula for the velocity and check what the constants $a$ and $b$ are to set a logical value to them.
+
+First, let us try to obtain the velocity of the oscillator, although might be a bit tedious.
+
+\[
+    x(t) = e^{-t \omega\zeta} \left( a  \cos\left( t\omega \sqrt{1 - \zeta^2} \right) + b  \sin\left( t\omega \sqrt{1 - \zeta^2} \right) \right)
+\]
+\[
+    v(t) = \dot{x}(t) = - a \omega \zeta e^{-t \omega\zeta} \cos\left( t\omega \sqrt{1 - \zeta^2} \right) - a e^{-t \omega\zeta} \omega \sqrt{1 - \zeta^2} \sin\left( t\omega \sqrt{1 - \zeta^2} \right)
+\]
+\[
+    - b \omega\zeta e^{-t \omega\zeta}  \sin\left( t\omega \sqrt{1 - \zeta^2} \right) + b e^{-t \omega\zeta} \omega \sqrt{1 - \zeta^2} \cos\left( t\omega \sqrt{1 - \zeta^2} \right)
+\]
+\[
+    = -e^{-t \omega\zeta} \left( \left[ a \omega \zeta - b \omega \sqrt{1 - \zeta^2} \right] \cos\left( t\omega \sqrt{1 - \zeta^2} \right) + \left[ a \omega \sqrt{1 - \zeta^2} + b\omega\zeta \right] \sin\left( t\omega \sqrt{1 - \zeta^2} \right) \right)
+\]
+
+The result would be:
+
+\[
+    x(t) = e^{-t \omega\zeta} \left( a  \cos\left( t\omega \sqrt{1 - \zeta^2} \right) + b  \sin\left( t\omega \sqrt{1 - \zeta^2} \right) \right)
+\]
+\[
+    v(t) = -e^{-t \omega\zeta} \left( \left[ a \omega \zeta - b \omega \sqrt{1 - \zeta^2} \right] \cos\left( t\omega \sqrt{1 - \zeta^2} \right) + \left[ a \omega \sqrt{1 - \zeta^2} + b\omega\zeta \right] \sin\left( t\omega \sqrt{1 - \zeta^2} \right) \right)
+\]
+
+We are almost done.
+
+The last part is to find the values for $a$ and $b$.
+
+To find the value of $a$, we just have to evaluate $x(t)$ at 0, obtaining the following result:
+
+\[
+    x(0) = e^{0} \left( a  \cos\left( 0 \right) + b  \sin\left( 0 \right) \right)
+    = a \cos(0) = a
+    \implies a = x(0) = x_0
+\]
+
+Next, we do the same for the velocity:
+
+\[
+    v(0) = -e^{0} \left( \left[ a \omega \zeta - b \omega \sqrt{1 - \zeta^2} \right] \cos\left(0 \right) + \left[ a \omega \sqrt{1 - \zeta^2} + b\omega\zeta \right] \sin\left( 0 \right) \right)
+    = -a \omega \zeta + b \omega \sqrt{1 - \zeta^2}
+\]
+\[
+    \implies v_0 = v(0) = -a \omega \zeta + b \omega \sqrt{1 - \zeta^2}
+\]
+
+And now, we finish this whole process by solving for b:
+
+\[
+    v_0 = -a \omega \zeta + b \omega \sqrt{1 - \zeta^2}
+\]
+\[
+    b \omega \sqrt{1 - \zeta^2} = v_0 -a \omega \zeta
+\]
+\[
+    b = \frac{v_0 -a \omega \zeta}{\omega \sqrt{1 - \zeta^2}}
+    = \frac{v_0 - x_0 \omega \zeta}{\omega \sqrt{1 - \zeta^2}}
+\]
+
+\[
+    \therefore a = x_0 \quad \quad \quad \quad b = \frac{v_0 - x_0 \omega \zeta}{\omega \sqrt{1 - \zeta^2}}
+\]
+
+We are done! It was a little tedious, but it is over at last! We found all the unknown constants and the formulas for the position $x(t)$ and velocity $v(t)$.
+
+\[
+    x(t) = e^{-t \omega\zeta} \left( x_0 \cos\left( t\omega \sqrt{1 - \zeta^2} \right) + \frac{v_0 - x_0 \omega \zeta}{\omega \sqrt{1 - \zeta^2}}  \sin\left( t\omega \sqrt{1 - \zeta^2} \right) \right)
+\]
+\[
+\begin{aligned}
+    v(t) = -e^{-t \omega\zeta} \Big( & \left[ x_0 \omega \zeta - \frac{v_0 - x_0 \omega \zeta}{\omega \sqrt{1 - \zeta^2}} \omega \sqrt{1 - \zeta^2} \right] \cos\!\left( t\omega \sqrt{1 - \zeta^2} \right) \\ &
+    + \left[ x_0 \omega \sqrt{1 - \zeta^2} + \frac{v_0 - x_0 \omega \zeta}{\omega \sqrt{1 - \zeta^2}} \omega\zeta \right] \sin\!\left( t\omega \sqrt{1 - \zeta^2} \right) \Big)
+\end{aligned}
+\]
+
+\end{document}
