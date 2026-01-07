@@ -49,16 +49,22 @@ This is the damped Hooke's law, and here $\beta$ is just a constant and $v$ is t
 Knowing this, we are already able to use in our codes to make that oscillator motion by using the Euler method which states that:
 
 \[
-    v_{n+1} = v_n + a \Delta t
+    v_n = v_{n-1} + a \Delta t
 \]
 \[
-    x_{n+1} = x_n + v \Delta t
+    x_n = x_{n-1} + v_n \Delta t
+\]
+
+Now, by using Newton's 2nd law:
+
+\[
+    F = ma \implies a = \frac{F}{m}
 \]
 
 The remaining formula would look like:
 
 \[
-    v_{n+1} = v_n - \beta v_n - k(p - r)
+    v_{n+1} = v_n - \Delta t \frac{\beta v_n + k(p - r)}{m}
 \]
 \[
     x_{n+1} = x_n + v_n \Delta t
@@ -278,18 +284,18 @@ At this point, we found two possible values for $z$, we only need to check what 
 Thanks to Euler, we know that:
 
 \[
-    e^{i\theta} = cos(\theta) + i sin(\theta)
+    e^{i\theta} = \cos(\theta) + i \sin(\theta)
 \]
 
 This is called \emph{Euler's identity} and it is super useful and riveting. I mention it briefly now because we can use it in our result as we have got this same form.
 
 \[
     x_1 = e^{-t \omega \zeta} e^{it \omega \sqrt{1 - \zeta^2}}
-    = e^{-\omega \zeta} \left( cos\left( t\omega \sqrt{1 - \zeta^2} \right) + i sin\left( t\omega \sqrt{1 - \zeta^2} \right) \right)
+    = e^{-\omega \zeta} \left( \cos\left( t\omega \sqrt{1 - \zeta^2} \right) + i \sin\left( t\omega \sqrt{1 - \zeta^2} \right) \right)
 \]
 \[
     x_2 = e^{-t \omega \zeta} e^{-it \omega \sqrt{1 - \zeta^2}}
-    = e^{-\omega \zeta} \left( cos\left( t\omega \sqrt{1 - \zeta^2} \right) - i sin\left( t\omega \sqrt{1 - \zeta^2} \right) \right)
+    = e^{-\omega \zeta} \left( \cos\left( t\omega \sqrt{1 - \zeta^2} \right) - i \sin\left( t\omega \sqrt{1 - \zeta^2} \right) \right)
 \]
 
 It is now when we can use the knowledge we obtained by checking if a linear combination of two solution for the ODE is also a solution for the equation by obtaining another function $x_3$:
