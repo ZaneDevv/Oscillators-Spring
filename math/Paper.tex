@@ -38,7 +38,7 @@ In this formula, $k$ is a constant and $x$ is the difference of the current body
     F = -kx = -k(p - r)
 \]
 
-In physics, this formula works just nice, but in simulations it will never stop. Thus, we need to add damping parameter to reduce the velocity of the object in order to help it from moving without stop.
+In physics, this formula works just nice, but in simulations it will never stop. Thus, we need to add a damping parameter to reduce the velocity of the object in order to help it from moving without a stop.
 
 \[
     F = -\beta v - k(p - r)
@@ -70,9 +70,9 @@ The remaining formula would look like:
     x_{n+1} = x_n + v_n \Delta t
 \]
 
-We start our simulation and we will see such a great motion in out body, but it could be even better. 
+We start our simulation and we will see such a great motion in our body, but it could be even better. 
 
-For the moment, these formulas rely on the frame rate even though we added $\Delta t$, Euler method is not the best solution solution, it just helps, without needing great resources. We want something which relies only on time.
+For the moment, these formulas rely on the frame rate even though we added $\Delta t$, Euler method is not the best solution solution, it just helps without needing great resources. We want something which relies only on time.
 
 
 
@@ -80,7 +80,7 @@ For the moment, these formulas rely on the frame rate even though we added $\Del
 
 \subsection{Obtaining an ODE}
 
-Let us start with two fundamental laws in physic: damped Hooke's law and 2nd Newton's law:
+Let us start with two fundamental laws in physics: damped Hooke's law and 2nd Newton's law:
 
 \[
     F = -\beta v - kx
@@ -120,19 +120,19 @@ For now, it does not look easier, but bear with me. To continue, we must underst
     a + 2 \sqrt{\frac{k}{m}} \frac{\beta}{2 \sqrt{mk}} v + \frac{k}{m}x = 0
 \]
 
-I must say it is not simpler, nonetheless this will allow us to rename some of these constant terms. Commonly, we call them as:
+I must say it is not simpler. Nonetheless this will allow us to rename some of these constant terms. Commonly, we call them as:
 
 \[
     \omega = \sqrt{\frac{k}{m}} \quad\quad \zeta = \frac{\beta}{2 \sqrt{mk}}
 \]
 
-Using these name, the formula we had so far turns into:
+Using these names, the formula we had so far turns into:
 
 \[
     a + 2 \omega \zeta v + \omega^2 x = 0
 \]
 
-From basic physics, we know that the velocity is nothing but the derivative of the position which respect of time and, acceleration, is the second derivative of the position which respect of time:
+From basic physics, we know that the velocity is nothing but the derivative of the position with respect to time and, acceleration, is the second derivative of the position with respect to time:
 
 \[
     x = x(t)
@@ -232,7 +232,7 @@ Here, we come across three possibilities:
 
 \subsubsection{Case 1.  $\zeta = 1$}
 
-The first possibility is the simplest one because since $\zeta^2 - 1 = 0$, $\sqrt{\zeta^2 - 1} = 0$ and the equation has only one result:
+The first possibility is the simplest one because, since $\zeta^2 - 1 = 0$, $\sqrt{\zeta^2 - 1} = 0$, the equation has only one result:
 
 \[
     z = \omega \left( -\zeta \pm 0 \right) = -\omega\zeta
