@@ -7,6 +7,10 @@ Lately, I decided to study all the formulas I have been seeing all along my time
 In this repository, you will se a code I programmed on [`Processing`](https://processing.org/), a software to make simple graphics simulations without caring about shaders or graphic programming using _java_, and a paper I have written in the directory [`math`](./math/) obtaining the formula from the very beginning, step by step.
 
 
+<div align="center">
+    <img src="./Bounce.gif" alt="Bounce" width="30%" />
+</div>
+
 ## Requeriments
 
 To be able to understand this project, you would need a solid knowledge about:
