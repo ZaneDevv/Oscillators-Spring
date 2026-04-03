@@ -4,7 +4,7 @@ Harmonic oscillators are key when it comes to simulations, physics or dynamic an
 
 Lately, I decided to study all the formulas I have been seeing all along my time as programmer and understand why that massive formulas come from. Today, I finally achieved that and wanted to test it by my own.
 
-In this repository, you will se a code I programmed on [`Processing`](https://processing.org/), a software to make simple graphics simulations without caring about shaders or graphic programming using _java_, and a paper I have written in the directory [`math`](./math/) obtaining the formula from the very beginning, step by step.
+In this repository, you will see a code I programmed on [`Processing`](https://processing.org/), a software to make simple graphics simulations without caring about shaders or graphic programming using _java_, and a paper I have written in the directory [`math`](./math/) obtaining the formula from the very beginning, step by step.
 
 
 <div align="center">
